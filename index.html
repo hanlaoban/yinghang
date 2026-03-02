@@ -3,331 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hanrunming AI Poster Generator</title>
+    <title>Hanrunming AI - Secure Edition</title>
     <style>
-        /* 引入系统无衬线字体，保持极简高级感 */
-        :root {
-            --bg-color: #000000;
-            --text-main: #ffffff;
-            --text-muted: #888888;
-            --border-color: #333333;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* 顶部导航栏 */
-        nav {
-            padding: 24px 48px;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        /* 主体布局：左右分栏 */
-        main {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            flex: 1;
-        }
-
-        /* 左侧：表单输入区 */
-        .input-section {
-            padding: 64px 48px;
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        h1 {
-            font-size: 48px;
-            font-weight: 600;
-            letter-spacing: -0.03em;
-            margin: 0 0 16px 0;
-            line-height: 1.1;
-        }
-
-        p.subtitle {
-            color: var(--text-muted);
-            font-size: 18px;
-            margin-bottom: 40px;
-            line-height: 1.5;
-        }
-
-        .form-group {
-            margin-bottom: 24px;
-        }
-
-        label {
-            display: block;
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        input, textarea {
-            width: 100%;
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 16px;
-            font-size: 16px;
-            border-radius: 4px;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.2s;
-            font-family: inherit;
-        }
-
-        input:focus, textarea:focus {
-            border-color: var(--text-main);
-        }
-
-        .row {
-            display: flex;
-            gap: 16px;
-        }
-
-        .row .form-group {
-            flex: 1;
-        }
-
-        /* 系统设置区域分隔线 */
-        .divider {
-            height: 1px;
-            background-color: var(--border-color);
-            margin: 8px 0 32px 0;
-        }
-
-        /* 纯黑白极简按钮 */
-        button {
-            background-color: var(--text-main);
-            color: var(--bg-color);
-            border: none;
-            padding: 18px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 16px;
-            transition: opacity 0.2s, transform 0.1s;
-        }
-
-        button:hover {
-            opacity: 0.9;
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        button:disabled {
-            background-color: #333;
-            color: #666;
-            cursor: not-allowed;
-        }
-
-        /* 右侧：海报预览区 */
-        .output-section {
-            padding: 64px 48px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background-color: #050505;
-        }
-
-        .image-container {
-            width: 100%;
-            max-width: 500px;
-            aspect-ratio: 2 / 3;
-            border: 1px dashed var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            position: relative;
-            overflow: hidden;
-            border-radius: 8px;
-        }
-
-        .image-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-
-        .loader {
-            display: none;
-            font-size: 14px;
-            letter-spacing: 0.1em;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
-
-        @media (max-width: 900px) {
-            main { grid-template-columns: 1fr; }
-            .input-section { border-right: none; border-bottom: 1px solid var(--border-color); }
-        }
+        /* 保持原有的极简暗黑风格 */
+        :root { --bg-color: #000000; --text-main: #ffffff; --text-muted: #888888; --border-color: #333333; }
+        body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-main); font-family: -apple-system, sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
+        nav { padding: 24px 48px; font-weight: 600; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        main { display: grid; grid-template-columns: 1fr 1fr; flex: 1; }
+        .input-section { padding: 64px 48px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; }
+        h1 { font-size: 48px; margin: 0 0 16px 0; }
+        p.subtitle { color: var(--text-muted); font-size: 18px; margin-bottom: 40px; }
+        .form-group { margin-bottom: 24px; }
+        label { display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px; }
+        input { width: 100%; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); padding: 16px; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: var(--text-main); color: var(--bg-color); border: none; padding: 18px; font-weight: 600; border-radius: 4px; cursor: pointer; margin-top: 16px; }
+        button:disabled { background-color: #333; color: #666; cursor: not-allowed; }
+        .output-section { padding: 64px 48px; display: flex; align-items: center; justify-content: center; background-color: #050505; }
+        .image-container { width: 100%; max-width: 500px; aspect-ratio: 2/3; border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; color: var(--text-muted); border-radius: 8px; overflow: hidden;}
+        .image-container img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        
+        /* 鉴权状态 UI */
+        #auth-status { font-size: 14px; color: #4caf50; display: none; }
+        .overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; padding: 48px; text-align: center;}
     </style>
 </head>
 <body>
 
     <nav>
-        Hanrunming AI
+        <span>Hanrunming AI</span>
+        <span id="auth-status">✅ 已授权，准备就绪</span>
     </nav>
 
     <main>
-        <div class="input-section">
+        <div class="input-section" style="position: relative;">
+            
+            <div id="loginOverlay" class="overlay">
+                <h2>安全验证</h2>
+                <p class="subtitle" style="margin-bottom: 24px;">为了保护接口安全，请先使用您的扣子账号进行安全授权。</p>
+                <button onclick="startPKCEAuth()" style="width: 200px;">🚀 点击授权登录</button>
+            </div>
+
             <h1>Create<br>Poster.</h1>
             <p class="subtitle">输入核心参数，基于底层大模型的视觉引擎将为您自动构建高分辨率资产。</p>
 
-            <div class="form-group">
-                <label>API Token (Coze 鉴权秘钥)</label>
-                <input type="password" id="api_token" placeholder="请在此粘贴您的 Token...">
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="form-group">
-                <label>产品名称 (Product Name)</label>
-                <input type="text" id="product_name" value="东亚银行个人大额存单">
-            </div>
-
-            <div class="row">
-                <div class="form-group">
-                    <label>核心数据 (Highlight Data)</label>
-                    <input type="text" id="interest_rate" value="2.00%">
-                </div>
-                <div class="form-group">
-                    <label>产品期限 (Period)</label>
-                    <input type="text" id="product_period" value="二年期">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>起存金额 (Starting Amount)</label>
-                <input type="text" id="start_amount" value="人民币20万元起">
-            </div>
+            <div class="form-group"><label>产品名称</label><input type="text" id="product_name" value="东亚银行个人大额存单"></div>
+            <div class="form-group"><label>核心数据</label><input type="text" id="interest_rate" value="2.00%"></div>
+            <div class="form-group"><label>产品期限</label><input type="text" id="product_period" value="二年期"></div>
+            <div class="form-group"><label>起存金额</label><input type="text" id="start_amount" value="人民币20万元起"></div>
 
             <button id="generateBtn" onclick="generatePoster()">Generate Image</button>
         </div>
 
         <div class="output-section">
-            <div class="image-container" id="imageContainer">
+            <div class="image-container">
                 <span id="placeholderText">IMAGE PREVIEW</span>
-                <span id="loader" class="loader">GENERATING...</span>
                 <img id="resultImage" alt="Generated Poster">
             </div>
         </div>
     </main>
 
     <script>
-        async function generatePoster() {
-            // 获取表单 DOM 元素
-            const apiToken = document.getElementById('api_token').value.trim();
-            const productName = document.getElementById('product_name').value;
-            const interestRate = document.getElementById('interest_rate').value;
-            const productPeriod = document.getElementById('product_period').value;
-            const startAmount = document.getElementById('start_amount').value;
+        // ==========================================
+        // 核心配置区：填入你在扣子后台申请的 Client ID
+        // ==========================================
+        const CLIENT_ID = '1112616983633'; 
+        // 自动获取当前网页地址作为重定向地址 (必须与后台配置的完全一致)
+        const REDIRECT_URI = window.location.origin + window.location.pathname; 
+        
+        let globalAccessToken = '';
+
+        // --- PKCE 加密算法工具 (浏览器原生) ---
+        function generateRandomString(length = 64) {
+            const array = new Uint32Array(length);
+            window.crypto.getRandomValues(array);
+            return Array.from(array, dec => ('0' + dec.toString(16)).substr(-2)).join('');
+        }
+
+        async function generateCodeChallenge(codeVerifier) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(codeVerifier);
+            const digest = await window.crypto.subtle.digest('SHA-256', data);
+            return btoa(String.fromCharCode.apply(null, new Uint8Array(digest)))
+                .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        }
+
+        // --- 步骤 1：发起授权 (点击按钮时触发) ---
+        async function startPKCEAuth() {
+            const codeVerifier = generateRandomString();
+            sessionStorage.setItem('code_verifier', codeVerifier); // 暂存，换Token时要用
+            const codeChallenge = await generateCodeChallenge(codeVerifier);
             
-            // 校验 Token 是否填写
-            if (!apiToken) {
-                alert("请先在上方输入框中填写您的 API Token！");
+            // 构造跳转到扣子的授权链接
+            const authUrl = `https://www.coze.cn/api/permission/oauth2/authorize?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+            
+            window.location.href = authUrl; // 页面跳转
+        }
+
+        // --- 步骤 2：处理回调并换取 Token (页面加载时执行) ---
+        async function handleAuthCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            
+            if (code) {
+                // 如果地址栏有 code，说明刚从扣子授权回来
+                document.getElementById('loginOverlay').innerHTML = '<h2>正在验证身份...</h2>';
+                const codeVerifier = sessionStorage.getItem('code_verifier');
+                
+                try {
+                    // 拿 code 和 verifier 去换真实的 Access Token
+                    const response = await fetch('https://api.coze.cn/api/permission/oauth2/token', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            client_id: CLIENT_ID,
+                            grant_type: 'authorization_code',
+                            code: code,
+                            redirect_uri: REDIRECT_URI,
+                            code_verifier: codeVerifier
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    if (data.access_token) {
+                        globalAccessToken = data.access_token;
+                        // 隐藏遮罩层，显示正常表单
+                        document.getElementById('loginOverlay').style.display = 'none';
+                        document.getElementById('auth-status').style.display = 'inline';
+                        // 清理地址栏，让它变干净
+                        window.history.replaceState({}, document.title, REDIRECT_URI);
+                    } else {
+                        alert('获取 Token 失败，请重新授权。');
+                    }
+                } catch (e) {
+                    console.error('鉴权错误:', e);
+                    alert('网络错误，无法换取令牌。');
+                }
+            }
+        }
+
+        // 页面一加载就检查是不是带了授权码回来
+        window.onload = handleAuthCallback;
+
+        // --- 步骤 3：正常调用工作流生图 (使用换来的合法 Token) ---
+        async function generatePoster() {
+            if (!globalAccessToken) {
+                alert("请先完成授权登录！");
                 return;
             }
 
             const btn = document.getElementById('generateBtn');
             const placeholder = document.getElementById('placeholderText');
-            const loader = document.getElementById('loader');
             const resultImg = document.getElementById('resultImage');
+            btn.disabled = true; btn.innerText = 'Processing...';
 
-            // UI 状态切换：加载中
-            btn.disabled = true;
-            btn.innerText = 'Processing...';
-            placeholder.style.display = 'none';
-            resultImg.style.display = 'none';
-            loader.style.display = 'block';
-
-            // 构建发给 Coze 的请求体
             const payload = {
-                product_name: productName,
-                product_description: "活出每刻，稳健增值。本产品已参加存款保险。",
-                interest_rate: interestRate,
-                start_amount: startAmount,
-                product_period: productPeriod,
-                reference_images: "",
-                custom_prompt: `一张高端商业银行海报。画面右侧是一位面带从容微笑的优雅亚洲女性，穿着高质感的米白色真丝上衣，坐在飞机头等舱。左上角写着粗体大字“${productName}”，紧接着是巨大的红色加粗数字“${interestRate}”。底部预留出25%的纯色空间用于排版。8K超高清。`
+                product_name: document.getElementById('product_name').value,
+                interest_rate: document.getElementById('interest_rate').value,
+                product_period: document.getElementById('product_period').value,
+                start_amount: document.getElementById('start_amount').value,
+                custom_prompt: `一张高端商业银行海报。画面右侧是一位面带从容微笑的优雅亚洲女性，坐在飞机头等舱。左上角写着粗体大字“${document.getElementById('product_name').value}”，紧接着是巨大的红色加粗数字“${document.getElementById('interest_rate').value}”。8K超高清。`
             };
 
             try {
-                // 发起 API 请求
-                const response = await fetch('/api/run', {
+                // 注意：这里要确保你的工作流接口地址是正确的
+                const response = await fetch('https://tcrnh58yq5.coze.site/run', {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${apiToken}`,
+                        'Authorization': `Bearer ${globalAccessToken}`, // 用合法的短期 Token
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(payload)
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP 状态码: ${response.status}`);
-                }
-
                 const data = await response.json();
-                console.log("接口完整返回数据:", data);
+                console.log("接口返回:", data);
 
-                // 解析 Coze 返回的图片 URL
-                // Coze 工作流通常将输出放在 data.data 里面，你可以按 F12 在控制台查看具体字段名
-                let imageUrl = null;
-                if (data.data && data.data.output_image) {
-                    imageUrl = data.data.output_image;
-                } else if (data.output_image) {
-                    imageUrl = data.output_image;
-                }
-
+                let imageUrl = data.data?.output_image || data.output_image;
                 if (imageUrl) {
                     resultImg.src = imageUrl;
                     resultImg.style.display = 'block';
-                    loader.style.display = 'none';
+                    placeholder.style.display = 'none';
                 } else {
-                    alert("接口调用成功，但没有找到图片链接字段，请按 F12 检查控制台的返回值。");
-                    loader.style.display = 'none';
-                    placeholder.style.display = 'block';
-                    placeholder.innerText = 'IMAGE NOT FOUND';
+                    alert("未找到图片链接，请按 F12 检查控制台。");
                 }
-
             } catch (error) {
-                console.error('出错了:', error);
-                alert('请求失败：' + error.message + '\n\n如果提示跨域拦截 (CORS)，您可能需要使用浏览器允许跨域插件进行测试。');
-                loader.style.display = 'none';
-                placeholder.style.display = 'block';
-                placeholder.innerText = 'ERROR OCCURRED';
+                alert('生图请求失败：' + error.message);
             } finally {
-                // UI 状态恢复
-                btn.disabled = false;
-                btn.innerText = 'Generate Image';
+                btn.disabled = false; btn.innerText = 'Generate Image';
             }
         }
     </script>
 </body>
-
 </html>
