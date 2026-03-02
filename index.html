@@ -66,8 +66,9 @@
         // 1. 核心配置区
         // ==========================================
         const CLIENT_ID = '80405530125690269781374913391394.app.coze'; 
+        const WORKFLOW_ID = '1112616983633'; // 你的工作流 ID
         
-        // 自动获取当前网页的纯净地址
+        // 自动获取当前网页的纯净地址作为回调地址
         const REDIRECT_URI = window.location.origin + window.location.pathname; 
         
         let globalAccessToken = '';
@@ -157,11 +158,10 @@
             }
         }
 
-        // 页面启动时检查是否需要处理回调
         window.onload = handleAuthCallback;
 
         // ==========================================
-        // 5. 正式调用大模型生图 (加入跨域代理)
+        // 5. 正式调用大模型生图 (使用官方 OpenAPI 大门)
         // ==========================================
         async function generatePoster() {
             if (!globalAccessToken) {
@@ -176,48 +176,50 @@
             btn.disabled = true; 
             btn.innerText = '正在生成...大概需要10-20秒';
 
-            const payload = {
-                product_name: document.getElementById('product_name').value,
-                interest_rate: document.getElementById('interest_rate').value,
-                product_period: document.getElementById('product_period').value,
-                start_amount: document.getElementById('start_amount').value,
-                custom_prompt: `一张高端商业银行海报。画面右侧是一位面带从容微笑的优雅亚洲女性，坐在飞机头等舱。左上角写着粗体大字“${document.getElementById('product_name').value}”，紧接着是巨大的红色加粗数字“${document.getElementById('interest_rate').value}”。8K超高清。`
+            // 按照官方 OpenAPI 的格式打包数据
+            const apiPayload = {
+                workflow_id: WORKFLOW_ID,
+                parameters: {
+                    product_name: document.getElementById('product_name').value,
+                    interest_rate: document.getElementById('interest_rate').value,
+                    product_period: document.getElementById('product_period').value,
+                    start_amount: document.getElementById('start_amount').value,
+                    custom_prompt: `一张高端商业银行海报。画面右侧是一位面带从容微笑的优雅亚洲女性，坐在飞机头等舱。左上角写着粗体大字“${document.getElementById('product_name').value}”，紧接着是巨大的红色加粗数字“${document.getElementById('interest_rate').value}”。8K超高清。`
+                }
             };
 
             try {
-                // 定义你要请求的真实扣子接口地址
-                const targetUrl = 'https://tcrnh58yq5.coze.site/run';
+                // 走官方主大门，原生支持跨域！
+                const targetUrl = 'https://api.coze.cn/v1/workflow/run';
                 
-                // 穿上一层 CORS 代理外衣，完美绕过浏览器跨域拦截
-                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
-
-                // 发送请求（通过代理）
-                const response = await fetch(proxyUrl, {
+                const response = await fetch(targetUrl, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${globalAccessToken}`, 
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(apiPayload)
                 });
 
                 if (!response.ok) {
                     throw new Error(`HTTP 错误! 状态码: ${response.status}`);
                 }
 
-                const data = await response.json();
-                console.log("扣子返回完整数据:", data);
+                const result = await response.json();
+                console.log("扣子官方主接口返回:", result);
 
-                // 拆解扣子的数据结构，找到图片 URL
+                // 拆解官方接口的数据找图片
                 let imageUrl = null;
-                if (data.data && data.data.output_image) {
-                    imageUrl = data.data.output_image;
-                } else if (data.output_image) {
-                    imageUrl = data.output_image;
-                } else if (data.data) {
-                    const dataStr = JSON.stringify(data.data);
-                    const match = dataStr.match(/https?:\/\/[^\s"']+\.(png|jpg|jpeg|webp)/i);
-                    if(match) imageUrl = match[0];
+                if (result.code === 0 && result.data) {
+                    try {
+                        // 官方 API 的 data 通常是个字符串格式的 JSON，需要解析
+                        const innerData = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
+                        imageUrl = innerData.output_image || innerData.image_url; 
+                    } catch (e) {
+                        // 如果解析失败，暴力提取：直接去字符串里抓图片链接
+                        const match = String(result.data).match(/https?:\/\/[^\s"']+\.(png|jpg|jpeg|webp)/i);
+                        if(match) imageUrl = match[0];
+                    }
                 }
 
                 if (imageUrl) {
@@ -225,11 +227,11 @@
                     resultImg.style.display = 'block';
                     placeholder.style.display = 'none';
                 } else {
-                    alert("接口调用成功，但在返回数据中未找到图片链接。请按 F12 检查控制台。");
+                    alert("接口调用成功，但在返回数据中未找到图片。请按 F12 检查控制台。");
                 }
             } catch (error) {
                 console.error("请求失败详情:", error);
-                alert('生图请求发生网络错误：' + error.message + '\n请检查 F12 控制台的详细报错信息。');
+                alert('生图请求发生网络错误：' + error.message);
             } finally {
                 btn.disabled = false; 
                 btn.innerText = 'Generate Image';
