@@ -176,11 +176,13 @@
             btn.disabled = true; 
             btn.innerText = '正在生成...大概需要10-20秒';
 
-            // 按照官方 OpenAPI 的格式打包数据
+            // 按照出厂说明书精准打包数据
             const apiPayload = {
                 workflow_id: WORKFLOW_ID,
                 parameters: {
                     product_name: document.getElementById('product_name').value,
+                    // 【关键修复1】：补齐扣子要求的必填参数
+                    product_description: "高端商业银行理财及存单产品，稳健投资，尊享收益。", 
                     interest_rate: document.getElementById('interest_rate').value,
                     product_period: document.getElementById('product_period').value,
                     start_amount: document.getElementById('start_amount').value,
@@ -214,7 +216,8 @@
                     try {
                         // 官方 API 的 data 通常是个字符串格式的 JSON，需要解析
                         const innerData = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
-                        imageUrl = innerData.output_image || innerData.image_url; 
+                        // 【关键修复2】：使用出厂说明书里正确的变量名 poster_url
+                        imageUrl = innerData.poster_url; 
                     } catch (e) {
                         // 如果解析失败，暴力提取：直接去字符串里抓图片链接
                         const match = String(result.data).match(/https?:\/\/[^\s"']+\.(png|jpg|jpeg|webp)/i);
@@ -227,7 +230,7 @@
                     resultImg.style.display = 'block';
                     placeholder.style.display = 'none';
                 } else {
-                    alert("接口调用成功，但在返回数据中未找到图片。请按 F12 检查控制台。");
+                    alert("接口调用成功，但在返回数据中未找到图片 (poster_url)。请按 F12 检查控制台。");
                 }
             } catch (error) {
                 console.error("请求失败详情:", error);
