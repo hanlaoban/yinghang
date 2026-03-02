@@ -40,7 +40,20 @@
             <div id="loginOverlay" class="overlay">
                 <h2>安全验证</h2>
                 <p class="subtitle" style="margin-bottom: 24px;">为了保护接口安全，请先使用您的扣子账号进行安全授权。</p>
-                <button onclick="startPKCEAuth()" style="width: 200px;">🚀 点击授权登录</button>
+                <button onclick="// --- 步骤 1：发起授权 (点击按钮时触发) ---
+        async function startPKCEAuth() {
+            const codeVerifier = generateRandomString();
+            sessionStorage.setItem('code_verifier', codeVerifier); // 暂存，换Token时要用
+            const codeChallenge = await generateCodeChallenge(codeVerifier);
+            
+            // [新增] 生成一个随机的 state 字符串来满足扣子的安全校验
+            const state = generateRandomString(16); 
+            
+            // 构造跳转到扣子的授权链接 (加上了 &state=...)
+            const authUrl = `https://www.coze.cn/api/permission/oauth2/authorize?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&code_challenge=${codeChallenge}&code_challenge_method=S256&state=${state}`;
+            
+            window.location.href = authUrl; // 页面跳转
+        }" style="width: 200px;">🚀 点击授权登录</button>
             </div>
 
             <h1>Create<br>Poster.</h1>
@@ -195,3 +208,4 @@
     </script>
 </body>
 </html>
+
