@@ -1,69 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hanrunming AI - Plugin Edition</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hanrunming AI - Final Secure Edition</title>
-<style>
-:root { --bg-color: #000000; --text-main: #ffffff; --text-muted: #888888; --border-color: #333333; }
-body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-main); font-family: -apple-system, sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
-@@ -36,17 +36,21 @@
-<div class="input-section">
-<div id="loginOverlay" class="overlay">
-<h2>安全验证</h2>
-                <p class="subtitle" style="margin-bottom: 24px; font-size: 15px;">请先使用扣子账号授权。</p>
-                <p class="subtitle" style="margin-bottom: 24px; font-size: 15px;">请先使用扣子账号进行授权登录。</p>
-<button onclick="startPKCEAuth()" style="width: 220px;">🚀 点击授权登录</button>
-</div>
+    <style>
+        :root { --bg-color: #000000; --text-main: #ffffff; --text-muted: #888888; --border-color: #333333; }
+        body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-main); font-family: -apple-system, sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
+        nav { padding: 24px 48px; font-weight: 600; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        main { display: grid; grid-template-columns: 1fr 1fr; flex: 1; }
+        .input-section { padding: 64px 48px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; position: relative; }
+        h1 { font-size: 48px; margin: 0 0 16px 0; }
+        p.subtitle { color: var(--text-muted); font-size: 18px; margin-bottom: 40px; }
+        .form-group { margin-bottom: 24px; }
+        label { display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px; }
+        input { width: 100%; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); padding: 16px; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: var(--text-main); color: var(--bg-color); border: none; padding: 18px; font-weight: 600; border-radius: 4px; cursor: pointer; margin-top: 16px; font-size: 16px; transition: opacity 0.2s; }
+        button:hover { opacity: 0.9; }
+        button:disabled { background-color: #333; color: #666; cursor: not-allowed; }
+        .output-section { padding: 64px 48px; display: flex; align-items: center; justify-content: center; background-color: #050505; }
+        .image-container { width: 100%; max-width: 500px; aspect-ratio: 2/3; border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; color: var(--text-muted); border-radius: 8px; overflow: hidden; position: relative; }
+        .image-container img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        #auth-status { font-size: 14px; color: #4caf50; display: none; }
+        .overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; padding: 48px; text-align: center; backdrop-filter: blur(4px); }
+    </style>
+</head>
+<body>
 
-<h1>Create<br>Poster.</h1>
-            <p class="subtitle">输入参数，自动构建高分辨率资产。</p>
+    <nav>
+        <span>Hanrunming AI</span>
+        <span id="auth-status">✅ 已授权，准备就绪</span>
+    </nav>
+
+    <main>
+        <div class="input-section">
+            <div id="loginOverlay" class="overlay">
+                <h2>安全验证</h2>
+                <p class="subtitle" style="margin-bottom: 24px; font-size: 15px;">请先使用扣子账号进行授权登录。</p>
+                <button onclick="startPKCEAuth()" style="width: 220px;">🚀 点击授权登录</button>
+            </div>
+
+            <h1>Create<br>Poster.</h1>
             <p class="subtitle">输入核心参数，基于底层大模型的视觉引擎将为您自动构建高分辨率资产。</p>
 
-<div class="form-group"><label>产品名称</label><input type="text" id="product_name" value="东亚银行个人大额存单"></div>
-<div class="form-group"><label>核心数据</label><input type="text" id="interest_rate" value="2.00%"></div>
-<div class="form-group"><label>产品期限</label><input type="text" id="product_period" value="二年期"></div>
-<div class="form-group"><label>起存金额</label><input type="text" id="start_amount" value="人民币20万元起"></div>
+            <div class="form-group"><label>产品名称</label><input type="text" id="product_name" value="东亚银行个人大额存单"></div>
+            <div class="form-group"><label>核心数据</label><input type="text" id="interest_rate" value="2.00%"></div>
+            <div class="form-group"><label>产品期限</label><input type="text" id="product_period" value="二年期"></div>
+            <div class="form-group"><label>起存金额</label><input type="text" id="start_amount" value="人民币20万元起"></div>
 
-<button id="generateBtn" onclick="generatePoster()">Generate Image</button>
-</div>
+            <button id="generateBtn" onclick="generatePoster()">Generate Image</button>
+        </div>
 
-<div class="output-section">
-<div class="image-container">
-<span id="placeholderText">IMAGE PREVIEW</span>
-@@ -56,17 +60,18 @@ <h1>Create<br>Poster.</h1>
-</main>
+        <div class="output-section">
+            <div class="image-container">
+                <span id="placeholderText">IMAGE PREVIEW</span>
+                <img id="resultImage" alt="Generated Poster">
+            </div>
+        </div>
+    </main>
 
-<script>
+    <script>
         // --- 1. 配置区 ---
-const CLIENT_ID = '80405530125690269781374913391394.app.coze'; 
-        // 这是从你的 JWT 里提取的正式插件 ID
-        const PLUGIN_ID = '7612582903486087203'; 
-        
+        const CLIENT_ID = '80405530125690269781374913391394.app.coze'; 
         const WORKFLOW_ID = '7612582903486087203'; // 生产环境 ID
-const REDIRECT_URI = window.location.origin + window.location.pathname; 
+        const REDIRECT_URI = window.location.origin + window.location.pathname; 
         
-let globalAccessToken = '';
+        let globalAccessToken = '';
 
         // --- 2. PKCE 算法 (无任何语法错误版) ---
-function generateRandomString(length = 64) {
-const array = new Uint32Array(length);
-window.crypto.getRandomValues(array);
-            return Array.from(array, dec => ('0' + dec.toString(16)).substr(-2)).join('');
+        function generateRandomString(length = 64) {
+            const array = new Uint32Array(length);
+            window.crypto.getRandomValues(array);
             return Array.from(array, dec => ('0' + dec.toString(16)).slice(-2)).join('');
-}
+        }
 
-async function generateCodeChallenge(codeVerifier) {
-@@ -77,12 +82,18 @@ <h1>Create<br>Poster.</h1>
-.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-}
+        async function generateCodeChallenge(codeVerifier) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(codeVerifier);
+            const digest = await window.crypto.subtle.digest('SHA-256', data);
+            return btoa(String.fromCharCode.apply(null, new Uint8Array(digest)))
+                .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        }
 
         // --- 3. 授权逻辑 ---
-async function startPKCEAuth() {
-            const codeVerifier = generateRandomString(64);
-            sessionStorage.setItem('code_verifier', codeVerifier);
-            const codeChallenge = await generateCodeChallenge(codeVerifier);
-            const authUrl = `https://www.coze.cn/api/permission/oauth2/authorize?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&code_challenge=${codeChallenge}&code_challenge_method=S256&state=123456`;
-            window.location.href = authUrl;
+        async function startPKCEAuth() {
             try {
                 const codeVerifier = generateRandomString(64);
                 sessionStorage.setItem('code_verifier', codeVerifier);
@@ -74,101 +94,100 @@ async function startPKCEAuth() {
             } catch (e) {
                 alert("授权跳转失败: " + e.message);
             }
-}
+        }
 
-async function handleAuthCallback() {
-@@ -109,77 +120,72 @@ <h1>Create<br>Poster.</h1>
-document.getElementById('auth-status').style.display = 'inline';
-window.history.replaceState({}, document.title, REDIRECT_URI);
-}
-                } catch (e) { console.error(e); }
+        async function handleAuthCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            if (code) {
+                const codeVerifier = sessionStorage.getItem('code_verifier');
+                try {
+                    const response = await fetch('https://api.coze.cn/api/permission/oauth2/token', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            client_id: CLIENT_ID,
+                            grant_type: 'authorization_code',
+                            code: code,
+                            redirect_uri: REDIRECT_URI,
+                            code_verifier: codeVerifier
+                        })
+                    });
+                    const data = await response.json();
+                    if (data.access_token) {
+                        globalAccessToken = data.access_token;
+                        document.getElementById('loginOverlay').style.display = 'none';
+                        document.getElementById('auth-status').style.display = 'inline';
+                        window.history.replaceState({}, document.title, REDIRECT_URI);
+                    }
                 } catch (e) { console.error("Token Error:", e); }
-}
-}
-window.onload = handleAuthCallback;
+            }
+        }
+        window.onload = handleAuthCallback;
 
-        // ==========================================
-        // 核心修正：切换到插件调用模式
-        // ==========================================
         // --- 4. 生图逻辑 ---
-async function generatePoster() {
-if (!globalAccessToken) return;
-const btn = document.getElementById('generateBtn');
-const resultImg = document.getElementById('resultImage');
-const placeholder = document.getElementById('placeholderText');
-
-btn.disabled = true; 
-            btn.innerText = '正在调用 API 插件...';
-
-            // ⚠️ 关键修正：插件调用接口与参数结构
-            const targetUrl = 'https://api.coze.cn/v1/workflow/run'; // 依然使用 workflow 接口，但针对代码项目有兼容逻辑
+        async function generatePoster() {
+            if (!globalAccessToken) return;
+            const btn = document.getElementById('generateBtn');
+            const resultImg = document.getElementById('resultImage');
+            const placeholder = document.getElementById('placeholderText');
+            
+            btn.disabled = true; 
             btn.innerText = '正在生成...请稍候';
 
-            const apiPayload = {
-                workflow_id: PLUGIN_ID, // 填入你的插件 ID
             const payload = {
                 workflow_id: WORKFLOW_ID,
-parameters: {
-product_name: document.getElementById('product_name').value,
-                    product_description: "高端商业银行海报生成",
+                parameters: {
+                    product_name: document.getElementById('product_name').value,
                     product_description: "高端商业银行理财海报",
-interest_rate: document.getElementById('interest_rate').value,
-product_period: document.getElementById('product_period').value,
-start_amount: document.getElementById('start_amount').value
-}
-};
+                    interest_rate: document.getElementById('interest_rate').value,
+                    product_period: document.getElementById('product_period').value,
+                    start_amount: document.getElementById('start_amount').value
+                }
+            };
 
-try {
-                const response = await fetch(targetUrl, {
+            try {
                 const response = await fetch('https://api.coze.cn/v1/workflow/run', {
-method: 'POST',
-headers: {
-'Authorization': `Bearer ${globalAccessToken}`,
-'Content-Type': 'application/json'
-},
-                    body: JSON.stringify(apiPayload)
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${globalAccessToken}`,
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify(payload)
-});
+                });
 
-const result = await response.json();
-                console.log("接口返回原始数据:", result);
+                const result = await response.json();
                 console.log("Coze Response:", result);
 
-if (result.code === 0 && result.data) {
-                    const innerData = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
-                    const imageUrl = innerData.poster_url || innerData.output_image || innerData.image_url;
+                if (result.code === 0 && result.data) {
                     const dataObj = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
                     const imageUrl = dataObj.poster_url || dataObj.output_image || dataObj.image_url;
 
-if (imageUrl) {
-resultImg.src = imageUrl;
-resultImg.style.display = 'block';
-placeholder.style.display = 'none';
-} else {
-                        // 暴力扫描 JSON 里的 http 链接
+                    if (imageUrl) {
+                        resultImg.src = imageUrl;
+                        resultImg.style.display = 'block';
+                        placeholder.style.display = 'none';
+                    } else {
                         // 暴力正则兜底
-const match = JSON.stringify(result.data).match(/https?:\/\/[^\s"']+\.(png|jpg|jpeg|webp)/i);
-                        if(match) {
+                        const match = JSON.stringify(result.data).match(/https?:\/\/[^\s"']+\.(png|jpg|jpeg|webp)/i);
                         if (match) {
-resultImg.src = match[0];
-resultImg.style.display = 'block';
-placeholder.style.display = 'none';
-} else {
-                            alert("生成成功但未找到图片，请在 Console 展开 Object。");
+                            resultImg.src = match[0];
+                            resultImg.style.display = 'block';
+                            placeholder.style.display = 'none';
+                        } else {
                             alert("生成成功但未解析到图片链接，请检查控制台数据结构。");
-}
-}
-} else {
-                    // 如果还是 Workflow Not Found，说明这个 ID 在 API 侧还没被索引到
-                    alert("错误: " + result.msg + "\n请确认在 code.coze.cn 点击了右上角的【发布】。");
+                        }
+                    }
+                } else {
                     alert("错误: " + (result.msg || "未知错误"));
-}
-} catch (error) {
-alert("请求失败: " + error.message);
-} finally {
-                btn.disabled = false; btn.innerText = 'Generate Image';
+                }
+            } catch (error) {
+                alert("请求失败: " + error.message);
+            } finally {
                 btn.disabled = false; 
                 btn.innerText = 'Generate Image';
-}
-}
-</script>
+            }
+        }
+    </script>
+</body>
+</html>
