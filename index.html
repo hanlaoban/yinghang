@@ -1,116 +1,55 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hanrunming AI - Vercel Edition</title>
-    <style>
-        :root { --bg-color: #000000; --text-main: #ffffff; --text-muted: #888888; --border-color: #333333; }
-        body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-main); font-family: -apple-system, sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
-        nav { padding: 24px 48px; font-weight: 600; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        main { display: grid; grid-template-columns: 1fr 1fr; flex: 1; }
-        .input-section { padding: 64px 48px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; }
-        h1 { font-size: 48px; margin: 0 0 16px 0; }
-        p.subtitle { color: var(--text-muted); font-size: 18px; margin-bottom: 40px; }
-        .form-group { margin-bottom: 24px; }
-        label { display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px; }
-        input { width: 100%; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); padding: 16px; border-radius: 4px; box-sizing: border-box; }
-        button { background-color: var(--text-main); color: var(--bg-color); border: none; padding: 18px; font-weight: 600; border-radius: 4px; cursor: pointer; margin-top: 16px; font-size: 16px; transition: opacity 0.2s; }
-        button:hover { opacity: 0.9; }
-        button:disabled { background-color: #333; color: #666; cursor: not-allowed; }
-        .output-section { padding: 64px 48px; display: flex; align-items: center; justify-content: center; background-color: #050505; }
-        .image-container { width: 100%; max-width: 500px; aspect-ratio: 2/3; border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; color: var(--text-muted); border-radius: 8px; overflow: hidden; position: relative; }
-        .image-container img { width: 100%; height: 100%; object-fit: cover; display: none; }
-    </style>
-</head>
-<body>
+<script>
+async function generatePoster() {
+    const btn = document.getElementById('generateBtn');
+    const placeholder = document.getElementById('placeholderText');
+    const resultImg = document.getElementById('resultImage');
 
-    <nav>
-        <span>Hanrunming AI</span>
-        <span style="color: #4caf50; font-size: 14px;">⚡️ Serverless 引擎已连接</span>
-    </nav>
+    btn.disabled = true;
+    btn.innerText = '正在生成...';
 
-    <main>
-        <div class="input-section">
-            <h1>Create<br>Poster.</h1>
-            <p class="subtitle">输入核心参数，基于底层大模型的视觉引擎将为您自动构建高分辨率资产。</p>
+    const payload = {
+        product_name: document.getElementById('product_name').value,
+        product_description: "高端商业银行海报生成",
+        interest_rate: document.getElementById('interest_rate').value,
+        product_period: document.getElementById('product_period').value,
+        start_amount: document.getElementById('start_amount').value
+    };
 
-            <div class="form-group"><label>产品名称</label><input type="text" id="product_name" value="东亚银行个人大额存单"></div>
-            <div class="form-group"><label>核心数据</label><input type="text" id="interest_rate" value="2.00%"></div>
-            <div class="form-group"><label>产品期限</label><input type="text" id="product_period" value="二年期"></div>
-            <div class="form-group"><label>起存金额</label><input type="text" id="start_amount" value="人民币20万元起"></div>
+    try {
+        const response = await fetch('/api/run', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
 
-            <button id="generateBtn" onclick="generatePoster()">Generate Image</button>
-        </div>
-
-        <div class="output-section">
-            <div class="image-container">
-                <span id="placeholderText">IMAGE PREVIEW</span>
-                <img id="resultImage" alt="Generated Poster">
-            </div>
-        </div>
-    </main>
-
-    <script>
-        async function generatePoster() {
-            const btn = document.getElementById('generateBtn');
-            const placeholder = document.getElementById('placeholderText');
-            const resultImg = document.getElementById('resultImage');
-            
-            btn.disabled = true; 
-            btn.innerText = '正在通过 Vercel 请求生图...';
-
-            const payload = {
-                // 注意：由于我们走的是 Vibe 直接地址，不需要 workflow_id
-                // 直接传参数给 Vibe 引擎即可
-                product_name: document.getElementById('product_name').value,
-                product_description: "高端商业银行海报生成",
-                interest_rate: document.getElementById('interest_rate').value,
-                product_period: document.getElementById('product_period').value,
-                start_amount: document.getElementById('start_amount').value
-            };
-
-            try {
-                // 直接请求你自己的 Vercel 后端接口！再也没有跨域烦恼！
-                const response = await fetch('/api/run', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-                console.log("Vercel 后端返回数据:", result);
-
-                if (result.code === 0 && result.data) {
-                    // Vibe 接口通常返回一个包含图片的对象
-                    const dataObj = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
-                    const imageUrl = dataObj.poster_url || dataObj.output_image || dataObj.image_url;
-
-                    if (imageUrl) {
-                        resultImg.src = imageUrl;
-                        resultImg.style.display = 'block';
-                        placeholder.style.display = 'none';
-                    } else {
-                        // 暴力解析 URL 兜底
-                        const match = JSON.stringify(result.data).match(/https?:\/\/[^\s"']+\.(png|jpg|jpeg|webp)/i);
-                        if(match) {
-                            resultImg.src = match[0];
-                            resultImg.style.display = 'block';
-                            placeholder.style.display = 'none';
-                        } else {
-                            alert("生成成功但未找到图片链接，请检查控制台。");
-                        }
-                    }
-                } else {
-                    alert("错误: " + (result.msg || "生图接口异常"));
-                }
-            } catch (error) {
-                alert('请求失败：' + error.message);
-            } finally {
-                btn.disabled = false; 
-                btn.innerText = 'Generate Image';
-            }
+        if (!response.ok) {
+            throw new Error("服务器错误: " + response.status);
         }
-    </script>
-</body>
-</html>
+
+        const result = await response.json();
+        console.log("后端返回:", result);
+
+        // 🔥 关键改动：不再判断 result.code
+        // 直接在整个返回体里搜索图片链接
+
+        const jsonStr = JSON.stringify(result);
+
+        const match = jsonStr.match(/https?:\/\/[^\s"']+\.(png|jpg|jpeg|webp)/i);
+
+        if (match) {
+            resultImg.src = match[0];
+            resultImg.style.display = 'block';
+            placeholder.style.display = 'none';
+        } else {
+            alert("生成成功，但没有找到图片链接。请查看控制台。");
+        }
+
+    } catch (error) {
+        console.error(error);
+        alert("请求失败：" + error.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = 'Generate Image';
+    }
+}
+</script>
